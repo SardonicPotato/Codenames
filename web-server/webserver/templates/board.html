@@ -1,0 +1,47 @@
+<html>
+<head>
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+Current turn: {{current}}
+<form method="get" action="../turn">
+    <div id="contentBox" style="margin:0px auto; width:70%">
+        <div id="column1" style="float:left; margin:0; width:25%;">
+            Player 1:<br>
+            {% for word in p1 %}
+            <input type="checkbox" name="p1" value="{{word}}"> {{word}}<br>
+            {% endfor %}
+        </div>
+
+        <div id="column2" style="float:left; margin:0;width:25%;">
+            Player 2:<br>
+            {% for word in p2 %}
+            <input type="checkbox" name="p2" value="{{word}}"> {{word}}<br>
+            {% endfor %}
+        </div>
+
+        <div id="column3" style="float:left; margin:0;width:25%">
+            Neutral:<br>
+            {% for word in neutral %}
+            <input type="checkbox" name="neutral" value="{{word}}"> {{word}}<br>
+            {% endfor %}
+        </div>
+
+        <div id="column4" style="float:left; margin:0;width:25%">
+            Assassin:<br>
+            {% for word in assassin %}
+            <input type="checkbox" name="assassin" value="{{word}}"> {{word}}<br>
+            {% endfor %}
+        </div>
+    </div>
+
+    <button type="submit">Play turn</button>
+</form>
+<form method="get" action="../solve">
+    <input type="submit" value="Suggest moves" />
+</form>
+<form method="get" action="../index">
+    <input type="submit" value="New game" />
+</form>
+</body>
+</html>

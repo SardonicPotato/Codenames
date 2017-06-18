@@ -1,0 +1,51 @@
+{% macro word_selector(words, name) -%}
+<select name="{{name}}">
+    {% for word in words %}
+    <option value="{{word}}">{{word}}</option>
+    {% endfor %}
+</select>
+{%- endmacro %}
+
+<html>
+<head>
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body>
+<form method="get" action="start">
+    <div id="contentBox" style="margin:0px auto; width:70%">
+        <div id="column1" style="float:left; margin:0; width:25%;">
+            Player 1:<br>
+            {% for name in p1 %}
+            {{ word_selector(words, name) }}<br>
+            {% endfor %}
+        </div>
+
+        <div id="column2" style="float:left; margin:0;width:25%;">
+            Player 2:<br>
+            {% for name in p2 %}
+            {{ word_selector(words, name) }}<br>
+            {% endfor %}
+        </div>
+
+        <div id="column3" style="float:left; margin:0;width:25%">
+            Neutral:<br>
+            {% for name in neutral %}
+            {{ word_selector(words, name) }}<br>
+            {% endfor %}
+        </div>
+
+        <div id="column4" style="float:left; margin:0;width:25%">
+            Assassin:<br>
+            {% for name in assassin %}
+            {{ word_selector(words, name) }}<br>
+            {% endfor %}
+        </div>
+    </div>
+
+    <button type="submit">Generate board</button>
+</form>
+<form method="get" action="random">
+    <input type="submit" value="Random board" />
+</form>
+</body>
+</html>

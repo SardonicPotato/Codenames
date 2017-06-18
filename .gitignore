@@ -1,3 +1,11 @@
+game_vocab.txt
+*.npy
+*.gz
+*.bin
+notebooks/
+.idea/
+.directory
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
