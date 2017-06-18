@@ -80,9 +80,9 @@ class Solver(object):
         covered_indices = list(map(self.vocab.index, covered_words))
 
         player_indices = list(set(map(self.vocab.index, player_words)) - set(covered_indices))
-        opponent_indices = list(set(map(self.vocab.index, opponent_words))- set(covered_indices))
-        neutral_indices = list(set(map(self.vocab.index, neutral_words))- set(covered_indices))
-        assassin_indices = list(set(map(self.vocab.index, assassin_words))- set(covered_indices))
+        opponent_indices = list(set(map(self.vocab.index, opponent_words)) - set(covered_indices))
+        neutral_indices = list(set(map(self.vocab.index, neutral_words)) - set(covered_indices))
+        assassin_indices = list(set(map(self.vocab.index, assassin_words)) - set(covered_indices))
 
         player_embeddings = self.embedding[player_indices]
         opponent_embeddings = self.embedding[opponent_indices]
@@ -111,14 +111,11 @@ class Solver(object):
                 'word': word,
                 'rank': i + 1,
                 'player_scores':
-                    [self._get_result(w, e, word_embedding) for w, e in zip(player_words, player_embeddings)]
-                ,
+                    [self._get_result(w, e, word_embedding) for w, e in zip(player_words, player_embeddings)],
                 'opponent_scores':
-                    [self._get_result(w, e, word_embedding) for w, e in zip(opponent_words, opponent_embeddings)]
-                ,
+                    [self._get_result(w, e, word_embedding) for w, e in zip(opponent_words, opponent_embeddings)],
                 'neutral_scores':
-                    [self._get_result(w, e, word_embedding) for w, e in zip(neutral_words, neutral_embeddings)]
-                ,
+                    [self._get_result(w, e, word_embedding) for w, e in zip(neutral_words, neutral_embeddings)],
                 'assassin_scores':
                     [self._get_result(w, e, word_embedding) for w, e in zip(assassin_words, assassin_embeddings)]
 
