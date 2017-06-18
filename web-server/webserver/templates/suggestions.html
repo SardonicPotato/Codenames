@@ -1,18 +1,18 @@
 {% macro display_result(result) -%}
 {{result.rank}} {{result.word}}<br>
-<br>Player word similarities:<br>
+<br>Player similarities:<br>
 {% for word, score, ranking in result.player_scores %}
 {{word}}: {{score}} {{ranking}}<br>
 {% endfor %}
-<br>Opponent word similarities:<br>
+<br>Opponent similarities:<br>
 {% for word, score, ranking in result.opponent_scores %}
 {{word}}: {{score}} {{ranking}}<br>
 {% endfor %}
-<br>Neutral word similarities:<br>
+<br>Neutral similarities:<br>
 {% for word, score, ranking in result.neutral_scores %}
 {{word}}: {{score}} {{ranking}}<br>
 {% endfor %}
-<br>Assassin word similarities:<br>
+<br>Assassin similarities:<br>
 {% for word, score, ranking in result.assassin_scores %}
 {{word}}: {{score}} {{ranking}}<br>
 {% endfor %}
@@ -24,15 +24,17 @@
 </head>
 <body>
 
-<div id="contentBox" style="margin:0px auto; width:70%">
-        Suggested moves:<br>
-        {% for result in suggestions %}
+<div id="contentBox">
+    <h4>Suggested moves:</h4>
+    {% for result in suggestions %}
+    <div class="result">
         <br>{{ display_result(result) }}<br>
-        {% endfor %}
-</div>
+    </div>
+    {% endfor %}
 
-<form method="get" action="display">
-    <input type="submit" value="Back" />
-</form>
+    <form method="get" action="display">
+        <input type="submit" id="backButton" value="Back"/>
+    </form>
+</div>
 </body>
 </html>

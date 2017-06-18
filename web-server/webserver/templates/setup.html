@@ -11,7 +11,8 @@
     <link href="/static/css/style.css" rel="stylesheet">
 </head>
 <body>
-<div id="contentBox" style="margin:0px auto; width:70%">
+<div id="contentBox">
+    <h4>Board selection</h4>
     <form method="get" action="start">
         <div id="group1" class="columnGroup">
             <div id="column1" class='column'>
@@ -43,7 +44,7 @@
                 {% endfor %}
             </div>
         </div>
-        <button type="submit" id="generateButton">Generate board</button>
+        <button type="submit" id="submitButton">Submit selection</button>
     </form>
     <form method="get" action="random">
         <input type="submit" value="Random board"/>
