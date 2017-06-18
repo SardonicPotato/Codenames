@@ -21,4 +21,4 @@ RUN python scripts/generate_model_data.py ./data
 EXPOSE 8080
 
 # Run app.py when the container launches
-CMD ["python", "webserver/server.py", "./data"]
+CMD ["python", "scripts/launch_server.py", "./data"]
