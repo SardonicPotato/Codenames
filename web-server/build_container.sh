@@ -1,1 +1,1 @@
-docker build -t codenames-server
+docker build -t codenames-server .
