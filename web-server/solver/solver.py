@@ -74,11 +74,13 @@ class Solver(object):
 
     def solve(self, num_results, words):
 
+        print(words)
+
         covered_indices = self._indices_from_words(words[COVERED])
 
-        score_from_similarity_vfunc = np.vectorize(self._score_from_similarity)
+        score_from_similarity_vfunc = np.vectorize(self._score_from_similarity, otypes=[np.float])
 
-        all_indices = covered_indices
+        all_indices = covered_indices.copy()
         indices = {}
         scores = {}
         for category in [PLAYER, OPPONENT, NEUTRAL, ASSASSIN]:
@@ -111,6 +113,8 @@ class Solver(object):
             }
 
             results.append(result)
+
+        print(indices)
 
         return results
 
