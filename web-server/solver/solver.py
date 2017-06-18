@@ -5,6 +5,13 @@ import numpy as np
 
 SolverResult = namedtuple('SolverResult', ['word', 'similarity', 'rating'])
 
+# TODO merge the enums in solver and webserver
+PLAYER = 'PLAYER'
+OPPONENT = 'OPPONENT'
+NEUTRAL = 'NEUTRAL'
+ASSASSIN = 'ASSASSIN'
+COVERED = 'COVERED'
+
 
 class Solver(object):
     def __init__(self, model_dir, vocab_size):
@@ -27,20 +34,33 @@ class Solver(object):
         self.vocab = [s.upper() for s in vocab]
         self.embedding = self._normalize_embedding(embedding)
 
-    @staticmethod
-    def _cosine_similarity(a, b):
-        return np.dot(a, b)
+    def _indices_from_words(self, words):
+        return list(map(self.vocab.index, words))
+
+    def _filtered_indices_from_words(self, words, filter):
+        indices = self._indices_from_words(words)
+        return list(set(indices) - set(filter))
 
     @staticmethod
-    def _score(a, b):
-        similarity = Solver._cosine_similarity(a, b)
-        upper = 0.3
-        lower = 0.1
+    def _similarity(a, b):
+        return np.dot(a, b.T)
+
+    @staticmethod
+    def _score_from_similarity(similarity):
+        upper = 0.4
+        lower = 0.0
         if similarity > upper:
             return 1.0
         if similarity > lower:
             return (similarity - lower) / (upper - lower)
         return 0
+
+    @staticmethod
+    def _utility_from_scores(scores):
+        return 1.0 * np.sum(scores[PLAYER], axis=1) \
+               - 1.0 * np.sum(scores[OPPONENT], axis=1) \
+               - 0.5 * np.sum(scores[NEUTRAL], axis=1) \
+               - 3.0 * np.sum(scores[ASSASSIN], axis=1)
 
     @staticmethod
     def _rating_from_similarity(similarity):
@@ -52,73 +72,57 @@ class Solver(object):
             return '*'
         return ''
 
-    @staticmethod
-    def _get_result(word, embedding, target_embedding):
-        similarity = Solver._cosine_similarity(embedding, target_embedding)
+    def _get_result(self, index, target_index):
+        similarity = Solver._similarity(self.embedding[index], self.embedding[target_index])
         rating = Solver._rating_from_similarity(similarity)
-        return SolverResult(word, similarity, rating)
+        return SolverResult(self.vocab[index], similarity, rating)
 
-    def _utility_from_embeddings(self,
-                                 word_embedding,
-                                 player_embeddings,
-                                 opponent_embeddings,
-                                 neutral_embeddings,
-                                 assassin_embeddings):
-        score = 0.0
-        for row in player_embeddings:
-            score += self._score(row, word_embedding)
-        for row in opponent_embeddings:
-            score += -1.0 * self._score(row, word_embedding)
-        for row in neutral_embeddings:
-            score += -0.5 * self._score(row, word_embedding)
-        for row in assassin_embeddings:
-            score += -3.0 * self._score(row, word_embedding)
-        return score
-
+    # TODO update call from webserver then remove this wrapper
     def solve(self, num_results, player_words, opponent_words, neutral_words, assassin_words, covered_words):
+        return self._solve(num_results, {
+            PLAYER: player_words,
+            OPPONENT: opponent_words,
+            NEUTRAL: neutral_words,
+            ASSASSIN: assassin_words,
+            COVERED: covered_words
+        })
 
-        covered_indices = list(map(self.vocab.index, covered_words))
+    def _solve(self, num_results, words):
 
-        player_indices = list(set(map(self.vocab.index, player_words)) - set(covered_indices))
-        opponent_indices = list(set(map(self.vocab.index, opponent_words)) - set(covered_indices))
-        neutral_indices = list(set(map(self.vocab.index, neutral_words)) - set(covered_indices))
-        assassin_indices = list(set(map(self.vocab.index, assassin_words)) - set(covered_indices))
+        covered_indices = self._indices_from_words(words[COVERED])
 
-        player_embeddings = self.embedding[player_indices]
-        opponent_embeddings = self.embedding[opponent_indices]
-        neutral_embeddings = self.embedding[neutral_indices]
-        assassin_embeddings = self.embedding[assassin_indices]
+        score_from_similarity_vfunc = np.vectorize(self._score_from_similarity)
 
-        def utility(index):
-            if index in (player_indices + opponent_indices + neutral_indices + assassin_indices + covered_indices):
-                return -float('Inf')
-            return self._utility_from_embeddings(self.embedding[index],
-                                                 player_embeddings,
-                                                 opponent_embeddings,
-                                                 neutral_embeddings,
-                                                 assassin_embeddings)
+        all_indices = covered_indices
+        indices = {}
+        scores = {}
+        for category in [PLAYER, OPPONENT, NEUTRAL, ASSASSIN]:
+            indices[category] = self._filtered_indices_from_words(words[category], covered_indices)
+            all_indices += indices[category]
+            similarities = self._similarity(self.embedding, self.embedding[indices[category]])
+            scores[category] = score_from_similarity_vfunc(similarities)
 
-        word_scores = np.array(list(map(utility, range(len(self.vocab)))))
-        ranks = np.argsort(-word_scores)
+        word_utilities = self._utility_from_scores(scores)
+        word_utilities[all_indices] = -float('Inf')
+
+        ranks = np.argsort(-word_utilities)
 
         results = []
         for i in range(num_results):
-            word_index = ranks[i]
-            word_embedding = self.embedding[word_index]
-            word = self.vocab[word_index]
+            target_index = ranks[i]
 
             result = {
-                'word': word,
+                'word': self.vocab[target_index],
+                'utility': word_utilities[i],
                 'rank': i + 1,
                 'player_scores':
-                    [self._get_result(w, e, word_embedding) for w, e in zip(player_words, player_embeddings)],
+                    [self._get_result(index, target_index) for index in indices[PLAYER]],
                 'opponent_scores':
-                    [self._get_result(w, e, word_embedding) for w, e in zip(opponent_words, opponent_embeddings)],
+                    [self._get_result(index, target_index) for index in indices[OPPONENT]],
                 'neutral_scores':
-                    [self._get_result(w, e, word_embedding) for w, e in zip(neutral_words, neutral_embeddings)],
+                    [self._get_result(index, target_index) for index in indices[NEUTRAL]],
                 'assassin_scores':
-                    [self._get_result(w, e, word_embedding) for w, e in zip(assassin_words, assassin_embeddings)]
-
+                    [self._get_result(index, target_index) for index in indices[ASSASSIN]],
             }
 
             results.append(result)
