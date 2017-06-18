@@ -3,14 +3,9 @@ from collections import namedtuple
 
 import numpy as np
 
-SolverResult = namedtuple('SolverResult', ['word', 'similarity', 'rating'])
+from solver.names import *
 
-# TODO merge the enums in solver and webserver
-PLAYER = 'PLAYER'
-OPPONENT = 'OPPONENT'
-NEUTRAL = 'NEUTRAL'
-ASSASSIN = 'ASSASSIN'
-COVERED = 'COVERED'
+SolverResult = namedtuple('SolverResult', ['word', 'similarity', 'rating'])
 
 
 class Solver(object):
@@ -37,9 +32,9 @@ class Solver(object):
     def _indices_from_words(self, words):
         return list(map(self.vocab.index, words))
 
-    def _filtered_indices_from_words(self, words, filter):
+    def _filtered_indices_from_words(self, words, filter_by):
         indices = self._indices_from_words(words)
-        return list(set(indices) - set(filter))
+        return list(set(indices) - set(filter_by))
 
     @staticmethod
     def _similarity(a, b):
@@ -77,17 +72,7 @@ class Solver(object):
         rating = Solver._rating_from_similarity(similarity)
         return SolverResult(self.vocab[index], similarity, rating)
 
-    # TODO update call from webserver then remove this wrapper
-    def solve(self, num_results, player_words, opponent_words, neutral_words, assassin_words, covered_words):
-        return self._solve(num_results, {
-            PLAYER: player_words,
-            OPPONENT: opponent_words,
-            NEUTRAL: neutral_words,
-            ASSASSIN: assassin_words,
-            COVERED: covered_words
-        })
-
-    def _solve(self, num_results, words):
+    def solve(self, num_results, words):
 
         covered_indices = self._indices_from_words(words[COVERED])
 

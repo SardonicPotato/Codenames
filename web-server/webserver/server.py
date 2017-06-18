@@ -4,6 +4,7 @@ import cherrypy
 from jinja2 import Environment, PackageLoader
 
 from solver.solver import Solver
+import solver.names
 from webserver.names import *
 from webserver.board import Board
 
@@ -14,7 +15,6 @@ def load_game_words():
 
 
 class CodenamesSolverApp(object):
-
     def __init__(self, data_dir):
         self.jinja_env = Environment(loader=PackageLoader('webserver', 'templates'))
         self.solver = Solver(data_dir, 100000)
@@ -82,11 +82,14 @@ class CodenamesSolverApp(object):
     @cherrypy.expose
     def solve(self):
         board = self.get_board()
-        suggested_moves = self.solver.solve(5,
-                                            list(board.get_player_words()),
-                                            list(board.get_opponent_words()),
-                                            list(board.get_words(NEUTRAL)),
-                                            list(board.get_words(ASSASSIN)),
-                                            list(board.get_words(COVERED)))
+        suggested_moves = self.solver.solve(num_results=5,
+                                            words={
+                                                solver.names.PLAYER: list(board.get_player_words()),
+                                                solver.names.OPPONENT: list(board.get_opponent_words()),
+                                                solver.names.NEUTRAL: list(board.get_words(NEUTRAL)),
+                                                solver.names.ASSASSIN: list(board.get_words(ASSASSIN)),
+                                                solver.names.COVERED: list(board.get_words(COVERED))
+                                            })
+
         tmpl = self.jinja_env.get_template('suggestions.html')
         return tmpl.render(suggestions=suggested_moves)

@@ -2,6 +2,7 @@ import random
 
 from webserver.names import *
 
+
 class Board(object):
 
     def __init__(self, n_p1, n_p2, n_neutral, n_assassin):

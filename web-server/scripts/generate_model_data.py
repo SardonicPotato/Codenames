@@ -1,5 +1,7 @@
-import sys, os
+import os
+import sys
 from subprocess import call
+
 from solver.util import generated_reduced_model
 
 try:
