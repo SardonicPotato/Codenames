@@ -1,5 +1,3 @@
-import os.path
-import sys
 from pkg_resources import resource_stream
 
 import cherrypy
@@ -17,10 +15,9 @@ def load_game_words():
 
 class CodenamesSolverApp(object):
 
-    def __init__(self):
+    def __init__(self, data_dir):
         self.jinja_env = Environment(loader=PackageLoader('webserver', 'templates'))
-
-        self.solver = Solver(sys.argv[1], 100000)
+        self.solver = Solver(data_dir, 100000)
         self.game_words = self.solver.filter_in_vocab(load_game_words())
 
     @staticmethod
@@ -93,20 +90,3 @@ class CodenamesSolverApp(object):
                                             list(board.get_words(COVERED)))
         tmpl = self.jinja_env.get_template('suggestions.html')
         return tmpl.render(suggestions=suggested_moves)
-
-
-if __name__ == '__main__':
-    conf = {
-        'global': {
-            'server.socket_host': '0.0.0.0'
-        },
-        '/': {
-            'tools.sessions.on': True,
-            'tools.staticdir.root': os.path.abspath(os.getcwd())
-        },
-        '/static': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': './public'
-        }
-    }
-    cherrypy.quickstart(CodenamesSolverApp(), '/', conf)
