@@ -11,41 +11,43 @@
     <link href="/static/css/style.css" rel="stylesheet">
 </head>
 <body>
-<form method="get" action="start">
-    <div id="contentBox" style="margin:0px auto; width:70%">
-        <div id="column1" style="float:left; margin:0; width:25%;">
-            Player 1:<br>
-            {% for name in p1 %}
-            {{ word_selector(words, name) }}<br>
-            {% endfor %}
-        </div>
+<div id="contentBox" style="margin:0px auto; width:70%">
+    <form method="get" action="start">
+        <div id="group1" class="columnGroup">
+            <div id="column1" class='column'>
+                Player 1:<br>
+                {% for name in p1 %}
+                {{ word_selector(words, name) }}<br>
+                {% endfor %}
+            </div>
 
-        <div id="column2" style="float:left; margin:0;width:25%;">
-            Player 2:<br>
-            {% for name in p2 %}
-            {{ word_selector(words, name) }}<br>
-            {% endfor %}
+            <div id="column2" class='column'>
+                Player 2:<br>
+                {% for name in p2 %}
+                {{ word_selector(words, name) }}<br>
+                {% endfor %}
+            </div>
         </div>
+        <div id="group2" class="columnGroup">
+            <div id="column3" class='column'>
+                Neutral:<br>
+                {% for name in neutral %}
+                {{ word_selector(words, name) }}<br>
+                {% endfor %}
+            </div>
 
-        <div id="column3" style="float:left; margin:0;width:25%">
-            Neutral:<br>
-            {% for name in neutral %}
-            {{ word_selector(words, name) }}<br>
-            {% endfor %}
+            <div id="column4" class='column'>
+                Assassin:<br>
+                {% for name in assassin %}
+                {{ word_selector(words, name) }}<br>
+                {% endfor %}
+            </div>
         </div>
-
-        <div id="column4" style="float:left; margin:0;width:25%">
-            Assassin:<br>
-            {% for name in assassin %}
-            {{ word_selector(words, name) }}<br>
-            {% endfor %}
-        </div>
-    </div>
-
-    <button type="submit">Generate board</button>
-</form>
-<form method="get" action="random">
-    <input type="submit" value="Random board" />
-</form>
+        <button type="submit" id="generateButton">Generate board</button>
+    </form>
+    <form method="get" action="random">
+        <input type="submit" value="Random board"/>
+    </form>
+</div>
 </body>
 </html>
