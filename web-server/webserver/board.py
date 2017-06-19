@@ -12,8 +12,8 @@ class Board(object):
             NEUTRAL: n_neutral,
             ASSASSIN: n_assassin
         }
-        self.word_sets = {}
-        self.current_player = 1
+        self.word_sets = {player: set() for player in self.n.keys()}
+        self.reset_game()
 
     def size(self):
         return sum(self.n.values())
