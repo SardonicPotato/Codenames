@@ -17,7 +17,7 @@ conf = {
     },
     '/static': {
         'tools.staticdir.on': True,
-        'tools.staticdir.dir': '../webserver/public'
+        'tools.staticdir.dir': 'webserver/public'
     }
 }
 cherrypy.quickstart(CodenamesSolverApp(data_dir), '/', conf)
