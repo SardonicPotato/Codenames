@@ -31,7 +31,7 @@ class CodenamesSolverApp(object):
         try:
             return cherrypy.session['board']
         except KeyError:
-            raise cherrypy.HTTPRedirect('/index/')
+            raise cherrypy.HTTPRedirect('/')
 
     @cherrypy.expose
     def index(self):
