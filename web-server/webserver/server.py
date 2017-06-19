@@ -11,7 +11,7 @@ from webserver.board import Board
 
 def load_game_words():
     with resource_stream(__name__, 'resources/game_vocab.txt') as vocab_file:
-        return [line.decode().strip() for line in vocab_file]
+        return [line.decode().strip().upper() for line in vocab_file]
 
 
 class CodenamesSolverApp(object):
