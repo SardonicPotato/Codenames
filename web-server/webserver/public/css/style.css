@@ -19,6 +19,10 @@ select {
     max-width:48em;
 }
 
+body {
+    padding-bottom:5em;
+}
+
 .column {
     float:left;
     margin:0;
