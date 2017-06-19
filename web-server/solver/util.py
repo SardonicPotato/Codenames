@@ -27,7 +27,7 @@ def filter_vocab(vocab, embedding, filter_func):
     return reduced_vocab, reduced_embedding
 
 
-def generated_reduced_model(input_path, output_dir, reduced_size=None):
+def generate_reduced_model(input_path, output_dir, reduced_size=None):
 
     vocab, embedding = load_binary_word2vec(input_path)
     reduced_vocab, reduced_embedding = filter_vocab(vocab, embedding, is_word)
