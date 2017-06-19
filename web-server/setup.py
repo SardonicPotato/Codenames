@@ -11,7 +11,7 @@ setup(
         'jinja2',
         'numpy'
     ],
-    extra_requires={
+    extras_require={
         'Util': ['gensim']
     },
     url='',
