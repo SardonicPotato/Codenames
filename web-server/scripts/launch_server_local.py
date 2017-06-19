@@ -8,7 +8,7 @@ from webserver.server import CodenamesSolverApp
 try:
     data_dir = sys.argv[1]
 except IndexError:
-    data_dir = "../data"
+    data_dir = "data"
 
 conf = {
     '/': {
