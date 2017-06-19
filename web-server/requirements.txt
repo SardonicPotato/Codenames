@@ -1,4 +1,0 @@
-cherrypy
-jinja2
-numpy
-gensim
